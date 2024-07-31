@@ -28,6 +28,7 @@ void loop() {
   
   buttonState = digitalRead(buttonPin);
 
+  // When the button is pressed, start the countdown
   if (buttonState == HIGH) {
     P.print("3");
     delay(2000);
