@@ -1,7 +1,7 @@
 #include <MD_Parola.h>
 #include <MD_MAX72xx.h>
 #include <SPI.h>
-#include "Parola_Fonts_data.h"
+#include "Parola_Fonts_data.h" // The custom font so that it shows sideways
 
 // Uncomment according to your hardware type
 #define HARDWARE_TYPE MD_MAX72XX::FC16_HW
