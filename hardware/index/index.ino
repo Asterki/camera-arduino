@@ -1,35 +1,46 @@
 #include <MD_Parola.h>
 #include <MD_MAX72xx.h>
 #include <SPI.h>
-#include "Parola_Fonts_data.h" // The custom font so that it shows sideways
+#include "Parola_Fonts_data.h"
+#include <Firmata.h>
 
-// Uncomment according to your hardware type
 #define HARDWARE_TYPE MD_MAX72XX::FC16_HW
-//#define HARDWARE_TYPE MD_MAX72XX::GENERIC_HW
-
-// Defining size, and output pins
 #define MAX_DEVICES 2
 #define CS_PIN 5
-const int buttonPin = 2;
+const int buttonPin = 13;
 
 MD_Parola P = MD_Parola(HARDWARE_TYPE, CS_PIN, MAX_DEVICES);
-int buttonState = 0;  // variable for reading the pushbutton status
+int buttonState = 0;
+int lastValue = LOW;
 
 void setup() {
   P.begin();
   P.setIntensity(0);
   P.displayClear();
   pinMode(buttonPin, INPUT);
+  Firmata.setFirmwareVersion(FIRMATA_FIRMWARE_MAJOR_VERSION, FIRMATA_FIRMWARE_MINOR_VERSION);
+  Firmata.begin(57600);
 }
 
 void loop() {
-  P.setTextAlignment(PA_CENTER);
-  P.setFont(newFont);
-  
+  while (Firmata.available()) {
+    Firmata.processInput();
+  }
+
+  int value = digitalRead(buttonPin);
+
+  if (value != lastValue && value == HIGH) {
+    Firmata.sendDigital(buttonPin, value);
+  }
+
+  lastValue = value;
+
   buttonState = digitalRead(buttonPin);
 
-  // When the button is pressed, start the countdown
   if (buttonState == HIGH) {
+    P.setTextAlignment(PA_CENTER);
+    P.setFont(newFont);
+    
     P.print("3");
     delay(2000);
 
